@@ -1,0 +1,97 @@
+### Pruebas de la API (extensión "REST Client" de VS Code, o copiar a Postman)
+@baseUrl = http://localhost:3000
+# Pegá acá el token que devuelve el login (solo la parte después de "Bearer ")
+@token = PEGAR_TOKEN
+
+### Login OK -> 200 + token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@techlab.com",
+  "password": "TU_PASSWORD"
+}
+
+### Login con credenciales incorrectas -> 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@techlab.com",
+  "password": "incorrecta"
+}
+
+### Login sin datos -> 400
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{}
+
+### Listar productos -> 200
+GET {{baseUrl}}/api/products
+
+### Obtener producto por id -> 200 / 404
+GET {{baseUrl}}/api/products/ID_DEL_PRODUCTO
+
+### Crear producto (con token) -> 201
+POST {{baseUrl}}/api/products/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Auriculares gamer",
+  "description": "Sonido 7.1, micrófono desmontable",
+  "price": 42999.5,
+  "stock": 12,
+  "category": "Audio"
+}
+
+### Crear producto con datos inválidos -> 400
+POST {{baseUrl}}/api/products/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -10
+}
+
+### Crear producto sin token -> 401
+POST {{baseUrl}}/api/products/create
+Content-Type: application/json
+
+{
+  "name": "Sin token",
+  "price": 1,
+  "stock": 1,
+  "category": "Test"
+}
+
+### Crear producto con token inválido -> 403
+POST {{baseUrl}}/api/products/create
+Authorization: Bearer token-falso
+Content-Type: application/json
+
+{
+  "name": "Token falso",
+  "price": 1,
+  "stock": 1,
+  "category": "Test"
+}
+
+### Actualizar producto (con token) -> 200 / 404
+PUT {{baseUrl}}/api/products/ID_DEL_PRODUCTO
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "price": 39999,
+  "stock": 8
+}
+
+### Eliminar producto (con token) -> 200 / 404
+DELETE {{baseUrl}}/api/products/ID_DEL_PRODUCTO
+Authorization: Bearer {{token}}
+
+### Ruta inexistente -> 404
+GET {{baseUrl}}/api/no-existe
